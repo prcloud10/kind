@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <p align="center"><img alt="kind" src="./logo/logo.png" width="300px" /></p>
 
 # Please see [Our Documentation](https://kind.sigs.k8s.io/docs/user/quick-start/) for more in-depth installation etc.
@@ -171,3 +172,7 @@ Participation in the Kubernetes community is governed by the [Kubernetes Code of
 [contributor guide]: https://kind.sigs.k8s.io/docs/contributing/getting-started
 [releases]: https://github.com/kubernetes-sigs/kind/releases
 [install guide]: https://kind.sigs.k8s.io/docs/user/quick-start/#installation
+=======
+# kind
+Kind  
+>>>>>>> 0645d7f7078f89eb47ae04efa095b3d4840b88b2
