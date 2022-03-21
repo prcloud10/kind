@@ -1,0 +1,5 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  apiServerAddress: "10.166.240.217"
+  apiServerPort: 6443
