@@ -1,13 +1,24 @@
-kind: Pod
-apiVersion: v1
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: apigw-app
   labels:
     app: apigw
 spec:
-  containers:
-  - name: apigw-app
-    image: luisgf1810/apigw:latest
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apigw
+  template:
+    metadata:
+      labels:
+        app: apigw
+    spec:
+      containers:
+      - name: apigw
+        image: luisgf1810/apigw:latest
+        ports:
+        - containerPort: 8081
 ---
 kind: Service
 apiVersion: v1
@@ -19,16 +30,27 @@ spec:
   ports:
   - port: 8081
 ---
-kind: Pod
-apiVersion: v1
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: appui-app
   labels:
     app: appui
 spec:
-  containers:
-  - name: appui-app
-    image: luisgf1810/appui:latest
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appui
+  template:
+    metadata:
+      labels:
+        app: appui
+    spec:
+      containers:
+      - name: appui
+        image: luisgf1810/appui:latest
+        ports:
+        - containerPort: 8080
 ---
 kind: Service
 apiVersion: v1

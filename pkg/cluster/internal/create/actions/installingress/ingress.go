@@ -56,7 +56,7 @@ func (a *action) Execute(ctx *actions.ActionContext) error {
 		"-f",
 		"https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml",
 	).Run(); err != nil {
-		return errors.Wrap(err, "failed to apply overlay network")
+		return errors.Wrap(err, "failed to apply ingress controller")
 	}
 
 	// mark success

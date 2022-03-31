@@ -87,7 +87,7 @@ func waitForReady(node nodes.Node, until time.Time) bool {
 		cmd := node.Command(
 			"kubectl",
 			"get",
-			"pods",
+			"deployments",
 			"--no-headers",
 			"--all-namespaces",
 			"-o=jsonpath='{.items[*]['status.conditions..status']}'",
