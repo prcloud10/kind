@@ -35,6 +35,7 @@ import (
 	configaction "sigs.k8s.io/kind/pkg/cluster/internal/create/actions/config"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installcapi"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installcni"
+	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installingress"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installstorage"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/kubeadminit"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/kubeadmjoin"
@@ -128,6 +129,8 @@ func Cluster(logger log.Logger, p providers.Provider, opts *ClusterOptions) erro
 			installstorage.NewAction(), // install StorageClass
 			kubeadmjoin.NewAction(),    // run kubeadm join
 			waitforready.NewAction(opts.WaitForReady),
+			installingress.NewAction(), // install Ingress Controller
+			//waitforingress.NewAction(opts.WaitForReady),
 			installcapi.NewAction(), // install capi
 			waitforcapi.NewAction(opts.WaitForReady),
 		)
