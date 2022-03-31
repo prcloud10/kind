@@ -40,6 +40,7 @@ import (
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/kubeadminit"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/kubeadmjoin"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/loadbalancer"
+	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/waitforapp"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/waitforingress"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/waitforready"
 	"sigs.k8s.io/kind/pkg/cluster/internal/kubeconfig"
@@ -134,6 +135,7 @@ func Cluster(logger log.Logger, p providers.Provider, opts *ClusterOptions) erro
 			//installcapi.NewAction(), // install capi
 			//waitforcapi.NewAction(opts.WaitForReady),
 			installapp.NewAction(), // install Application
+			waitforapp.NewAction(opts.WaitForReady),
 		)
 	}
 

@@ -87,9 +87,9 @@ func waitForReady(node nodes.Node, until time.Time) bool {
 		cmd := node.Command(
 			"kubectl",
 			"get",
-			"deployments",
+			"pods",
 			"--no-headers",
-			"--all-namespaces",
+			"-n=ingress-nginx",
 			"-o=jsonpath='{.items[*]['status.conditions..status']}'",
 		)
 		lines, err := exec.OutputLines(cmd)
@@ -97,13 +97,16 @@ func waitForReady(node nodes.Node, until time.Time) bool {
 			return false
 		}
 		status := strings.Fields(lines[0])
+		f := 0
 		for _, s := range status {
-			if !strings.Contains(s, "True") {
-				return false
+			if strings.Contains(s, "True") {
+				f = f + 1
 			}
 		}
-
-		return true
+		if f == 8 {
+			return true
+		}
+		return false
 	})
 }
 
