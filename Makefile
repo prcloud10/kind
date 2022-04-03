@@ -78,6 +78,7 @@ integration:
 	MODE=integration hack/make-rules/test.sh
 # all tests
 test:
+	clear
 	./build/kind delete cluster	
 	./build/kind create cluster --config ./config/cluster-config.yaml
 ################################################################################

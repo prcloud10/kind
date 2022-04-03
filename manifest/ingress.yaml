@@ -19,7 +19,7 @@ spec:
           service:
             name: apigw-service
             port:
-              number: 8081
+              number: 8080
       - pathType: Prefix
         path: "/capi"
         backend:
