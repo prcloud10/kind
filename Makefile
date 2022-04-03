@@ -61,7 +61,7 @@ KIND_BUILD_FLAGS?=-trimpath -ldflags="-buildid= -w -X=sigs.k8s.io/kind/pkg/cmd/k
 all: build
 # builds kind in a container, outputs to $(OUT_DIR)
 kind:
-	go build -v -o "$(OUT_DIR)/$(KIND_BINARY_NAME)" $(KIND_BUILD_FLAGS)
+	CGO_ENABLED=0 go build -o ./build/kind -a -ldflags '-extldflags "-static"' .	
 # alias for building kind
 build: kind
 # use: make install INSTALL_DIR=/usr/local/bin
@@ -78,7 +78,8 @@ integration:
 	MODE=integration hack/make-rules/test.sh
 # all tests
 test:
-	hack/make-rules/test.sh
+	./build/kind delete cluster	
+	./build/kind create cluster --config ./config/cluster-config.yaml
 ################################################################################
 # ================================= Cleanup ====================================
 # standard cleanup target

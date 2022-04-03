@@ -102,6 +102,7 @@ func waitForReady(node nodes.Node, until time.Time) bool {
 				return false
 			}
 		}
+		time.Sleep(18 * time.Second)
 		return true
 	})
 }

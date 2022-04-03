@@ -62,26 +62,35 @@ spec:
   ports:
   - port: 8080
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: main-ingress
+  name: capi-app
+  labels:
+    app: capi
 spec:
-  rules:
-  - http:
-      paths:
-      - pathType: Prefix
-        path: "/"
-        backend:
-          service:
-            name: appui-service
-            port:
-              number: 8080
-      - pathType: Prefix
-        path: "/api"
-        backend:
-          service:
-            name: apigw-service
-            port:
-              number: 8081
+  replicas: 1
+  selector:
+    matchLabels:
+      app: capi
+  template:
+    metadata:
+      labels:
+        app: capi
+    spec:
+      containers:
+      - name: capi
+        image: luisgf1810/capi:latest
+        ports:
+        - containerPort: 8080
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: capi-service
+spec:
+  selector:
+    app: capi
+  ports:
+  - port: 8080
 ---

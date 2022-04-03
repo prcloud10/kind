@@ -33,6 +33,7 @@ import (
 
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions"
 	configaction "sigs.k8s.io/kind/pkg/cluster/internal/create/actions/config"
+	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/configingress"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installapp"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installcni"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installingress"
@@ -132,10 +133,9 @@ func Cluster(logger log.Logger, p providers.Provider, opts *ClusterOptions) erro
 			waitforready.NewAction(opts.WaitForReady),
 			installingress.NewAction(), // install Ingress Controller
 			waitforingress.NewAction(opts.WaitForReady),
-			//installcapi.NewAction(), // install capi
-			//waitforcapi.NewAction(opts.WaitForReady),
 			installapp.NewAction(), // install Application
 			waitforapp.NewAction(opts.WaitForReady),
+			configingress.NewAction(), // config ingress
 		)
 	}
 

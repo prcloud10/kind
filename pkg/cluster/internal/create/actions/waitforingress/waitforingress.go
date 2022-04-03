@@ -104,6 +104,7 @@ func waitForReady(node nodes.Node, until time.Time) bool {
 			}
 		}
 		if f == 8 {
+			time.Sleep(8 * time.Second)
 			return true
 		}
 		return false
