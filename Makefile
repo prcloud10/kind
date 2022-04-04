@@ -61,7 +61,7 @@ KIND_BUILD_FLAGS?=-trimpath -ldflags="-buildid= -w -X=sigs.k8s.io/kind/pkg/cmd/k
 all: build
 # builds kind in a container, outputs to $(OUT_DIR)
 kind:
-	CGO_ENABLED=0 go build -o ./build/kind -a -ldflags '-extldflags "-static"' .	
+	CGO_ENABLED=0 go build -o $(OUT_DIR) -a -ldflags '-extldflags "-static"' .	
 # alias for building kind
 build: kind
 # use: make install INSTALL_DIR=/usr/local/bin

@@ -35,6 +35,7 @@ import (
 	configaction "sigs.k8s.io/kind/pkg/cluster/internal/create/actions/config"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/configingress"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installapp"
+	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installcapi"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installcni"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installingress"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installstorage"
@@ -42,6 +43,7 @@ import (
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/kubeadmjoin"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/loadbalancer"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/waitforapp"
+	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/waitforcapi"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/waitforingress"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/waitforready"
 	"sigs.k8s.io/kind/pkg/cluster/internal/kubeconfig"
@@ -67,6 +69,8 @@ type ClusterOptions struct {
 	// Options to control output
 	DisplayUsage      bool
 	DisplaySalutation bool
+	Hostname          string
+	IP                string
 }
 
 // Cluster creates a cluster
@@ -135,6 +139,8 @@ func Cluster(logger log.Logger, p providers.Provider, opts *ClusterOptions) erro
 			waitforingress.NewAction(opts.WaitForReady),
 			installapp.NewAction(), // install Application
 			waitforapp.NewAction(opts.WaitForReady),
+			installcapi.NewAction(), // install capi
+			waitforcapi.NewAction(opts.WaitForReady),
 			configingress.NewAction(), // config ingress
 		)
 	}

@@ -24,13 +24,9 @@ import (
 	"github.com/spf13/cobra"
 
 	"sigs.k8s.io/kind/pkg/cmd"
-	"sigs.k8s.io/kind/pkg/cmd/kind/build"
-	"sigs.k8s.io/kind/pkg/cmd/kind/completion"
 	"sigs.k8s.io/kind/pkg/cmd/kind/create"
 	"sigs.k8s.io/kind/pkg/cmd/kind/delete"
-	"sigs.k8s.io/kind/pkg/cmd/kind/export"
 	"sigs.k8s.io/kind/pkg/cmd/kind/get"
-	"sigs.k8s.io/kind/pkg/cmd/kind/load"
 	"sigs.k8s.io/kind/pkg/cmd/kind/version"
 	"sigs.k8s.io/kind/pkg/log"
 )
@@ -79,14 +75,10 @@ func NewCommand(logger log.Logger, streams cmd.IOStreams) *cobra.Command {
 		"silence all stderr output",
 	)
 	// add all top level subcommands
-	cmd.AddCommand(build.NewCommand(logger, streams))
-	cmd.AddCommand(completion.NewCommand(logger, streams))
 	cmd.AddCommand(create.NewCommand(logger, streams))
 	cmd.AddCommand(delete.NewCommand(logger, streams))
-	cmd.AddCommand(export.NewCommand(logger, streams))
 	cmd.AddCommand(get.NewCommand(logger, streams))
 	cmd.AddCommand(version.NewCommand(logger, streams))
-	cmd.AddCommand(load.NewCommand(logger, streams))
 	return cmd
 }
 
@@ -117,6 +109,7 @@ func runE(logger log.Logger, flags *flagpole, command *cobra.Command) error {
 			logger.Warn("WARNING: --loglevel is deprecated, please switch to -v and -q!")
 		}
 	}
+
 	return nil
 }
 

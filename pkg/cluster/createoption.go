@@ -35,6 +35,20 @@ func (c createOptionAdapter) apply(o *internalcreate.ClusterOptions) error {
 	return c(o)
 }
 
+func CreateWithHostname(hostname string) CreateOption {
+	return createOptionAdapter(func(o *internalcreate.ClusterOptions) error {
+		o.Hostname = hostname
+		return nil
+	})
+}
+
+func CreateWithIP(ip string) CreateOption {
+	return createOptionAdapter(func(o *internalcreate.ClusterOptions) error {
+		o.IP = ip
+		return nil
+	})
+}
+
 // CreateWithConfigFile configures the config file path to use
 func CreateWithConfigFile(path string) CreateOption {
 	return createOptionAdapter(func(o *internalcreate.ClusterOptions) error {

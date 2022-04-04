@@ -20,6 +20,7 @@ package cluster
 import (
 	"io"
 	"io/ioutil"
+	"net"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -40,6 +41,8 @@ type flagpole struct {
 	Retain     bool
 	Wait       time.Duration
 	Kubeconfig string
+	hostname   string
+	ip         string
 }
 
 // NewCommand returns a new cobra.Command for cluster creation
@@ -57,6 +60,8 @@ func NewCommand(logger log.Logger, streams cmd.IOStreams) *cobra.Command {
 	}
 	cmd.Flags().StringVar(&flags.Name, "name", "", "cluster name, overrides KIND_CLUSTER_NAME, config (default kind)")
 	cmd.Flags().StringVar(&flags.Config, "config", "", "path to a kind config file")
+	cmd.Flags().StringVar(&flags.ip, "managementip", "", "Default: "+GetOutboundIP())
+	cmd.Flags().StringVar(&flags.hostname, "hostname", "", "Default: bootstrap")
 	cmd.Flags().StringVar(&flags.ImageName, "image", "", "node docker image to use for booting the cluster")
 	cmd.Flags().BoolVar(&flags.Retain, "retain", false, "retain nodes for debugging when cluster creation fails")
 	cmd.Flags().DurationVar(&flags.Wait, "wait", time.Duration(100*time.Second), "wait for control plane node to be ready (default 0s)")
@@ -71,15 +76,38 @@ func runE(logger log.Logger, streams cmd.IOStreams, flags *flagpole) error {
 	)
 
 	// handle config flag, we might need to read from stdin
-	withConfig, err := configOption(flags.Config, streams.In)
+	/*withConfig, err := configOption(flags.Config, streams.In)
 	if err != nil {
 		return err
-	}
+	}*/
+
+	str := `kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"
+  extraPortMappings:
+  - containerPort: 80
+    hostPort: 80
+    protocol: TCP
+  - containerPort: 443
+    hostPort: 443
+    protocol: TCP
+networking:
+  apiServerAddress: ` + GetOutboundIP() + `
+  apiServerPort: 6443`
 
 	// create the cluster
-	if err = provider.Create(
+	if err := provider.Create(
 		flags.Name,
-		withConfig,
+		cluster.CreateWithRawConfig([]byte(str)),
+		cluster.CreateWithHostname(flags.hostname),
+		cluster.CreateWithIP(flags.ip),
 		cluster.CreateWithNodeImage(flags.ImageName),
 		cluster.CreateWithRetain(flags.Retain),
 		cluster.CreateWithWaitForReady(flags.Wait),
@@ -106,4 +134,16 @@ func configOption(rawConfigFlag string, stdin io.Reader) (cluster.CreateOption, 
 		return nil, errors.Wrap(err, "error reading config from stdin")
 	}
 	return cluster.CreateWithRawConfig(raw), nil
+}
+
+func GetOutboundIP() string {
+	conn, err := net.Dial("udp", "8.8.8.8:80")
+	if err != nil {
+		return ""
+	}
+	defer conn.Close()
+
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+
+	return localAddr.IP.String()
 }

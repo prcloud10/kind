@@ -21,7 +21,35 @@ spec:
             port:
               number: 8080
       - pathType: Prefix
-        path: "/capi"
+        path: "/list"
+        backend:
+          service:
+            name: apigw-service
+            port:
+              number: 8080
+      - pathType: Prefix
+        path: "/capi/api"
+        backend:
+          service:
+            name: capi-service
+            port:
+              number: 8080
+      - pathType: Prefix
+        path: "/capi/repositories"
+        backend:
+          service:
+            name: capi-service
+            port:
+              number: 8080
+      - pathType: Prefix
+        path: "/capi/init"
+        backend:
+          service:
+            name: capi-service
+            port:
+              number: 8080
+      - pathType: Prefix
+        path: "/capi/delete"
         backend:
           service:
             name: capi-service
