@@ -14,6 +14,13 @@ spec:
             port:
               number: 8080
       - pathType: Prefix
+        path: "/loki"
+        backend:
+          service:
+            name: loki
+            port:
+              number: 3100
+      - pathType: Prefix
         path: "/api"
         backend:
           service:

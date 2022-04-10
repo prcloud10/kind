@@ -35,14 +35,16 @@ import (
 )
 
 type flagpole struct {
-	Name       string
-	Config     string
-	ImageName  string
-	Retain     bool
-	Wait       time.Duration
-	Kubeconfig string
-	hostname   string
-	ip         string
+	Name        string
+	Config      string
+	ImageName   string
+	Retain      bool
+	Wait        time.Duration
+	Kubeconfig  string
+	hostname    string
+	ip          string
+	workers     int32
+	controllers int32
 }
 
 // NewCommand returns a new cobra.Command for cluster creation
@@ -62,6 +64,8 @@ func NewCommand(logger log.Logger, streams cmd.IOStreams) *cobra.Command {
 	cmd.Flags().StringVar(&flags.Config, "config", "", "path to a kind config file")
 	cmd.Flags().StringVar(&flags.ip, "managementip", "", "Default: "+GetOutboundIP())
 	cmd.Flags().StringVar(&flags.hostname, "hostname", "", "Default: bootstrap")
+	cmd.Flags().Int32VarP(&flags.workers, "worker", "w", 1, "worker node count")
+	cmd.Flags().Int32VarP(&flags.controllers, "control", "c", 1, "controller node count")
 	cmd.Flags().StringVar(&flags.ImageName, "image", "", "node docker image to use for booting the cluster")
 	cmd.Flags().BoolVar(&flags.Retain, "retain", false, "retain nodes for debugging when cluster creation fails")
 	cmd.Flags().DurationVar(&flags.Wait, "wait", time.Duration(100*time.Second), "wait for control plane node to be ready (default 0s)")

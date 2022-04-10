@@ -24,6 +24,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"sigs.k8s.io/kind/pkg/cmd"
+	"sigs.k8s.io/kind/pkg/cmd/kind/build"
 	"sigs.k8s.io/kind/pkg/cmd/kind/create"
 	"sigs.k8s.io/kind/pkg/cmd/kind/delete"
 	"sigs.k8s.io/kind/pkg/cmd/kind/get"
@@ -75,6 +76,7 @@ func NewCommand(logger log.Logger, streams cmd.IOStreams) *cobra.Command {
 		"silence all stderr output",
 	)
 	// add all top level subcommands
+	cmd.AddCommand(build.NewCommand(logger, streams))
 	cmd.AddCommand(create.NewCommand(logger, streams))
 	cmd.AddCommand(delete.NewCommand(logger, streams))
 	cmd.AddCommand(get.NewCommand(logger, streams))

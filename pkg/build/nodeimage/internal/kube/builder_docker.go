@@ -146,6 +146,8 @@ func (b *dockerBuilder) Build() (Bits, error) {
 			filepath.Join(binDir, "kubeadm"),
 			filepath.Join(binDir, "kubelet"),
 			filepath.Join(binDir, "kubectl"),
+			filepath.Join("./hack/build", "clusterctl"),
+			filepath.Join("./hack/build", "helm"),
 		},
 		imagePaths: []string{
 			filepath.Join(imageDir, "kube-apiserver.tar"),

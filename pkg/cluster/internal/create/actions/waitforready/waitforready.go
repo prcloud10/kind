@@ -120,6 +120,7 @@ func waitForReady(node nodes.Node, until time.Time, selectorLabel string) bool {
 		// example, if we have three control plane nodes, and all are ready,
 		// then the status will have the following format: `True True True'.
 		status := strings.Fields(lines[0])
+		//ctx.Logger.V(0).Infof("%s,%s", status, selectorLabel)
 		for _, s := range status {
 			// Check node status. If node is ready then this will be 'True',
 			// 'False' or 'Unknown' otherwise.

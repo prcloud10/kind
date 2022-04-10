@@ -89,49 +89,6 @@ func LoadImageArchive(n nodes.Node, image io.Reader) error {
 	return nil
 }
 
-func InstallClusterCtl(n nodes.Node) error {
-	cmd := n.Command(
-		"curl",
-		"-L",
-		"https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.1.2/clusterctl-linux-amd64",
-		"-o",
-		"clusterctl",
-	)
-	if err := cmd.Run(); err != nil {
-		return errors.Wrap(err, "failed to install clusterctl")
-	}
-
-	cmd = n.Command(
-		"chmod",
-		"+x",
-		"./clusterctl",
-	)
-	if err := cmd.Run(); err != nil {
-		return errors.Wrap(err, "failed to install clusterctl")
-	}
-
-	cmd = n.Command(
-		"mv",
-		"./clusterctl",
-		"/usr/local/bin/clusterctl",
-	)
-	if err := cmd.Run(); err != nil {
-		return errors.Wrap(err, "failed to install clusterctl")
-	}
-
-	cmd = n.Command(
-		"clusterctl",
-		"init",
-		"--infrastructure",
-		"byoh",
-	)
-	if err := cmd.Run(); err != nil {
-		return errors.Wrap(err, "failed to install clusterctl")
-	}
-
-	return nil
-}
-
 func getSnapshotter(n nodes.Node) (string, error) {
 	out, err := exec.Output(n.Command("containerd", "config", "dump"))
 	if err != nil {

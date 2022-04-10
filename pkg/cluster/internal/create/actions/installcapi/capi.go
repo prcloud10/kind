@@ -18,6 +18,8 @@ limitations under the License.
 package installcapi
 
 import (
+	"sigs.k8s.io/kind/pkg/errors"
+
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions"
 	"sigs.k8s.io/kind/pkg/cluster/nodeutils"
 )
@@ -45,9 +47,13 @@ func (a *action) Execute(ctx *actions.ActionContext) error {
 	}
 	node := controlPlanes[0] // kind expects at least one always
 
-	err = nodeutils.InstallClusterCtl(node)
-	if err != nil {
-		return err
+	if err := node.Command(
+		"clusterctl",
+		"init",
+		"--infrastructure",
+		"byoh",
+	).Run(); err != nil {
+		return errors.Wrap(err, "failed to remove control plane taint")
 	}
 
 	// mark success

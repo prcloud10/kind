@@ -67,7 +67,7 @@ func (a *Action) Execute(ctx *actions.ActionContext) error {
 	// Wait for the nodes to reach Ready status.
 	startTime := time.Now()
 
-	isReady := waitForReady(node, startTime.Add(a.waitTime))
+	isReady := waitForReady(ctx, node, startTime.Add(a.waitTime))
 	if !isReady {
 		ctx.Status.End(false)
 		ctx.Logger.V(0).Info(" • WARNING: Timed out waiting for Ready ⚠️")
@@ -82,7 +82,7 @@ func (a *Action) Execute(ctx *actions.ActionContext) error {
 
 // WaitForReady uses kubectl inside the "node" container to check if the
 // clusterctl nodes are "Ready".
-func waitForReady(node nodes.Node, until time.Time) bool {
+func waitForReady(ctx *actions.ActionContext, node nodes.Node, until time.Time) bool {
 	return tryUntil(until, func() bool {
 		cmd := node.Command(
 			"kubectl",
@@ -97,17 +97,13 @@ func waitForReady(node nodes.Node, until time.Time) bool {
 			return false
 		}
 		status := strings.Fields(lines[0])
-		f := 0
+		ctx.Logger.V(0).Infof("%s", status)
 		for _, s := range status {
-			if strings.Contains(s, "True") {
-				f = f + 1
+			if !strings.Contains(s, "True") {
+				return false
 			}
 		}
-		if f == 8 {
-			time.Sleep(3 * time.Second)
-			return true
-		}
-		return false
+		return true
 	})
 }
 
