@@ -33,9 +33,6 @@ import (
 
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions"
 	configaction "sigs.k8s.io/kind/pkg/cluster/internal/create/actions/config"
-	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/configingress"
-	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/createcluster"
-	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installapp"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installcapi"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installcni"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installingress"
@@ -44,7 +41,6 @@ import (
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/kubeadminit"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/kubeadmjoin"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/loadbalancer"
-	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/waitforapp"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/waitforcapi"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/waitforready"
 	"sigs.k8s.io/kind/pkg/cluster/internal/kubeconfig"
@@ -145,7 +141,7 @@ func Cluster(logger log.Logger, p providers.Provider, opts *ClusterOptions) erro
 			installlogs.NewAction(), // install logsdb
 			installcapi.NewAction(), // install capi
 			waitforcapi.NewAction(opts.WaitForReady),
-			createcluster.NewAction(
+			/*createcluster.NewAction(
 				opts.Workers,
 				opts.Controllers,
 				opts.Hostname,
@@ -154,7 +150,7 @@ func Cluster(logger log.Logger, p providers.Provider, opts *ClusterOptions) erro
 			),
 			installapp.NewAction(), // install Application
 			waitforapp.NewAction(opts.WaitForReady),
-			configingress.NewAction(), // config ingress
+			configingress.NewAction(), // config ingress*/
 		)
 	}
 
