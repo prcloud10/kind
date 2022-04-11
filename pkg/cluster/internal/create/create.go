@@ -34,6 +34,7 @@ import (
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions"
 	configaction "sigs.k8s.io/kind/pkg/cluster/internal/create/actions/config"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/configingress"
+	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/createcluster"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installapp"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installcapi"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installcni"
@@ -70,7 +71,10 @@ type ClusterOptions struct {
 	DisplayUsage      bool
 	DisplaySalutation bool
 	Hostname          string
-	IP                string
+	Ip                string
+	Workers           string
+	Controllers       string
+	K8version         string
 }
 
 // Cluster creates a cluster
@@ -131,7 +135,8 @@ func Cluster(logger log.Logger, p providers.Provider, opts *ClusterOptions) erro
 			)
 		}
 		// add remaining steps
-		actionsToRun = append(actionsToRun,
+		actionsToRun = append(
+			actionsToRun,
 			installstorage.NewAction(), // install StorageClass
 			kubeadmjoin.NewAction(),    // run kubeadm join
 			waitforready.NewAction(opts.WaitForReady),
@@ -140,10 +145,16 @@ func Cluster(logger log.Logger, p providers.Provider, opts *ClusterOptions) erro
 			installlogs.NewAction(), // install logsdb
 			installcapi.NewAction(), // install capi
 			waitforcapi.NewAction(opts.WaitForReady),
+			createcluster.NewAction(
+				opts.Workers,
+				opts.Controllers,
+				opts.Hostname,
+				opts.Ip,
+				opts.K8version, // create cluster
+			),
 			installapp.NewAction(), // install Application
 			waitforapp.NewAction(opts.WaitForReady),
-			configingress.NewAction(), // config ingress*/
-			//createcluster.NewAction(), // create cluster*/
+			configingress.NewAction(), // config ingress
 		)
 	}
 

@@ -44,7 +44,28 @@ func CreateWithHostname(hostname string) CreateOption {
 
 func CreateWithIP(ip string) CreateOption {
 	return createOptionAdapter(func(o *internalcreate.ClusterOptions) error {
-		o.IP = ip
+		o.Ip = ip
+		return nil
+	})
+}
+
+func CreateWithWorkers(workers string) CreateOption {
+	return createOptionAdapter(func(o *internalcreate.ClusterOptions) error {
+		o.Workers = workers
+		return nil
+	})
+}
+
+func CreateWithControllers(controllers string) CreateOption {
+	return createOptionAdapter(func(o *internalcreate.ClusterOptions) error {
+		o.Controllers = controllers
+		return nil
+	})
+}
+
+func CreateWithK8version(k8version string) CreateOption {
+	return createOptionAdapter(func(o *internalcreate.ClusterOptions) error {
+		o.K8version = k8version
 		return nil
 	})
 }

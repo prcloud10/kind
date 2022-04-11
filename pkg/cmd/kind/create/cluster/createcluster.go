@@ -43,8 +43,9 @@ type flagpole struct {
 	Kubeconfig  string
 	hostname    string
 	ip          string
-	workers     int32
-	controllers int32
+	workers     string
+	controllers string
+	k8version   string
 }
 
 // NewCommand returns a new cobra.Command for cluster creation
@@ -62,10 +63,11 @@ func NewCommand(logger log.Logger, streams cmd.IOStreams) *cobra.Command {
 	}
 	cmd.Flags().StringVar(&flags.Name, "name", "", "cluster name, overrides KIND_CLUSTER_NAME, config (default kind)")
 	cmd.Flags().StringVar(&flags.Config, "config", "", "path to a kind config file")
-	cmd.Flags().StringVar(&flags.ip, "managementip", "", "Default: "+GetOutboundIP())
-	cmd.Flags().StringVar(&flags.hostname, "hostname", "", "Default: bootstrap")
-	cmd.Flags().Int32VarP(&flags.workers, "worker", "w", 1, "worker node count")
-	cmd.Flags().Int32VarP(&flags.controllers, "control", "c", 1, "controller node count")
+	cmd.Flags().StringVar(&flags.ip, "ip", GetOutboundIP(), "Ip for management")
+	cmd.Flags().StringVar(&flags.hostname, "hostname", "bootstrap", "Hostname")
+	cmd.Flags().StringVar(&flags.k8version, "k8version", "v1.22.3", "Kubernetes version")
+	cmd.Flags().StringVar(&flags.workers, "workers", "1", "worker node count")
+	cmd.Flags().StringVar(&flags.controllers, "controllers", "1", "controller node count")
 	cmd.Flags().StringVar(&flags.ImageName, "image", "", "node docker image to use for booting the cluster")
 	cmd.Flags().BoolVar(&flags.Retain, "retain", false, "retain nodes for debugging when cluster creation fails")
 	cmd.Flags().DurationVar(&flags.Wait, "wait", time.Duration(100*time.Second), "wait for control plane node to be ready (default 0s)")
@@ -112,6 +114,9 @@ networking:
 		cluster.CreateWithRawConfig([]byte(str)),
 		cluster.CreateWithHostname(flags.hostname),
 		cluster.CreateWithIP(flags.ip),
+		cluster.CreateWithWorkers(flags.workers),
+		cluster.CreateWithControllers(flags.controllers),
+		cluster.CreateWithK8version(flags.k8version),
 		cluster.CreateWithNodeImage(flags.ImageName),
 		cluster.CreateWithRetain(flags.Retain),
 		cluster.CreateWithWaitForReady(flags.Wait),
