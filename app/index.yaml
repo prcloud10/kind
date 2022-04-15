@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  app:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-04-15T20:48:50.457900295-03:00"
+    description: A Helm chart for creating app microservices
+    digest: 2ae2c44c1aee6eb1b12e3446a17b4fb31a1a59b3000b3411801f97049abfc1b4
+    name: app
+    type: application
+    urls:
+    - https://prcloud10.github.io/kind/app-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-04-15T20:48:50.457425448-03:00"
