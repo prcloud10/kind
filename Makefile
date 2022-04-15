@@ -24,7 +24,13 @@
 # ========================== Capture Environment ===============================
 # get the repo root and output path
 REPO_ROOT:=${CURDIR}
+OUT_CHARTS_DIR:=../kind-charts/kind
 OUT_DIR=$(REPO_ROOT)/bin
+CHART_APP_SRCDIR=$(REPO_ROOT)/charts/app
+CHART_CLUSTER_SRCDIR=$(REPO_ROOT)/charts/cluster
+OUT_APP_CHARTDIR=$(OUT_CHARTS_DIR)/app
+OUT_CLUSTER_CHARTDIR=$(OUT_CHARTS_DIR)/cluster
+
 # record the source commit in the binary, overridable
 COMMIT?=$(shell git rev-parse HEAD 2>/dev/null)
 ################################################################################
@@ -46,6 +52,9 @@ SHELL:=env PATH=$(subst $(SPACE),\$(SPACE),$(PATH)) $(SHELL)
 # ============================== OPTIONS =======================================
 # install tool
 INSTALL?=install
+# chart tool
+HELM?=helm
+HELM_URL=https://prcloud10.github.io/kind/
 # install will place binaries here, by default attempts to mimic go install
 INSTALL_DIR?=$(shell hack/build/goinstalldir.sh)
 # the output binary name, overridden when cross compiling
@@ -59,11 +68,26 @@ KIND_BUILD_FLAGS?=-trimpath -ldflags="-buildid= -w -X=sigs.k8s.io/kind/pkg/cmd/k
 # ================================= Building ===================================
 # standard "make" target -> builds
 all: build
+# build all charts and binaries
+build: kind buildcharts pushcharts
 # builds kind in a container, outputs to $(OUT_DIR)
 kind:
 	CGO_ENABLED=0 go build -o $(OUT_DIR) -a -ldflags '-extldflags "-static"' .	
-# alias for building kind
-build: kind
+# builds charts, outputs to $(HELM_URL)
+buildcharts: buildchartapp
+buildchartcluster:
+	$(HELM) package $(CHART_CLUSTER_SRCDIR) -d $(OUT_CLUSTER_CHARTDIR)
+	$(HELM) repo index $(OUT_CLUSTER_CHARTDIR) --url $(HELM_URL)
+buildchartapp:
+	$(HELM) package $(CHART_APP_SRCDIR) -d $(OUT_APP_CHARTDIR)
+	$(HELM) repo index $(OUT_APP_CHARTDIR) --url $(HELM_URL)
+# push charts to repositories
+pushcharts:
+	cd $(OUT_CHARTS_DIR)
+	git add .
+	git commit -m "update"
+	git push 
+
 # use: make install INSTALL_DIR=/usr/local/bin
 install: build
 	$(INSTALL) -d $(INSTALL_DIR)
@@ -78,9 +102,6 @@ integration:
 	MODE=integration hack/make-rules/test.sh
 # all tests
 test:
-	clear
-	./build/kind delete cluster	
-	./build/kind create cluster --config ./config/cluster-config.yaml
 ################################################################################
 # ================================= Cleanup ====================================
 # standard cleanup target

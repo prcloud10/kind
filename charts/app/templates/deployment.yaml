@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apigw-app
+  labels:
+    app: apigw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apigw
+  template:
+    metadata:
+      labels:
+        app: apigw
+    spec:
+      containers:
+      - name: apigw
+        image: luisgf1810/apigw:latest
+        ports:
+        - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appui-app
+  labels:
+    app: appui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appui
+  template:
+    metadata:
+      labels:
+        app: appui
+    spec:
+      containers:
+      - name: appui
+        image: luisgf1810/appui:latest
+        ports:
+        - containerPort: 8080

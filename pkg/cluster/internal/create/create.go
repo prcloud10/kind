@@ -33,6 +33,7 @@ import (
 
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions"
 	configaction "sigs.k8s.io/kind/pkg/cluster/internal/create/actions/config"
+	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/createcluster"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installcapi"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installcni"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installingress"
@@ -137,20 +138,20 @@ func Cluster(logger log.Logger, p providers.Provider, opts *ClusterOptions) erro
 			kubeadmjoin.NewAction(),    // run kubeadm join
 			waitforready.NewAction(opts.WaitForReady),
 			installingress.NewAction(), // install Ingress Controller
-			//waitforingress.NewAction(opts.WaitForReady),
+			// waitforingress.NewAction(opts.WaitForReady),
 			installlogs.NewAction(), // install logsdb
 			installcapi.NewAction(), // install capi
 			waitforcapi.NewAction(opts.WaitForReady),
-			/*createcluster.NewAction(
+			createcluster.NewAction(
 				opts.Workers,
 				opts.Controllers,
 				opts.Hostname,
 				opts.Ip,
 				opts.K8version, // create cluster
 			),
-			installapp.NewAction(), // install Application
-			waitforapp.NewAction(opts.WaitForReady),
-			configingress.NewAction(), // config ingress*/
+			/*installapp.NewAction(), 						// install Application
+			waitforapp.NewAction(opts.WaitForReady),*/
+			//configingress.NewAction(), 					// config ingress*/
 		)
 	}
 

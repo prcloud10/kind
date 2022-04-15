@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: appui-service
+spec:
+  selector:
+    app: appui
+  ports:
+  - port: {{ .Values.port }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: apigw-service
+spec:
+  selector:
+    app: apigw
+  ports:
+  - port: {{ .Values.port }}
