@@ -34,6 +34,7 @@ import (
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions"
 	configaction "sigs.k8s.io/kind/pkg/cluster/internal/create/actions/config"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/createcluster"
+	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installapp"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installcapi"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installcni"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/installingress"
@@ -42,6 +43,7 @@ import (
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/kubeadminit"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/kubeadmjoin"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/loadbalancer"
+	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/waitforapp"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/waitforcapi"
 	"sigs.k8s.io/kind/pkg/cluster/internal/create/actions/waitforready"
 	"sigs.k8s.io/kind/pkg/cluster/internal/kubeconfig"
@@ -149,9 +151,8 @@ func Cluster(logger log.Logger, p providers.Provider, opts *ClusterOptions) erro
 				opts.Ip,
 				opts.K8version, // create cluster
 			),
-			/*installapp.NewAction(), 						// install Application
-			waitforapp.NewAction(opts.WaitForReady),*/
-			//configingress.NewAction(), 					// config ingress*/
+			installapp.NewAction(), // install Application
+			waitforapp.NewAction(opts.WaitForReady),
 		)
 	}
 
@@ -186,14 +187,17 @@ func Cluster(logger log.Logger, p providers.Provider, opts *ClusterOptions) erro
 	}
 
 	// optionally display usage
-	if opts.DisplayUsage {
+	/*if opts.DisplayUsage {
 		logUsage(logger, opts.Config.Name, opts.KubeconfigPath)
 	}
 	// optionally give the user a friendly salutation
 	if opts.DisplaySalutation {
 		logger.V(0).Info("")
 		logSalutation(logger)
-	}
+	}*/
+
+	logger.V(0).Infof(" \nBootstrap ready, go to http://" + opts.Ip + " to follow for cluster installation")
+
 	return nil
 }
 
@@ -220,6 +224,7 @@ func logUsage(logger log.Logger, name, explicitKubeconfigPath string) {
 	}
 	logger.V(0).Infof(`Set kubectl context to "%s"`, kctx)
 	logger.V(0).Infof("You can now use your cluster with:\n\n" + sampleCommand)
+
 }
 
 func logSalutation(logger log.Logger) {

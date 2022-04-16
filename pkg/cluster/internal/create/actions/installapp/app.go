@@ -50,11 +50,12 @@ func (a *action) Execute(ctx *actions.ActionContext) error {
 
 	// install the ingress controller
 	if err := node.Command(
-		"kubectl",
-		"apply",
-		"--kubeconfig=/etc/kubernetes/admin.conf",
-		"-f",
-		"https://raw.githubusercontent.com/prcloud10/kind/main/manifest/deployment.yaml",
+		"helm",
+		"install",
+		"--repo",
+		"https://prcloud10.github.io/kind/app/",
+		"app1",
+		"app",
 	).Run(); err != nil {
 		return errors.Wrap(err, "failed to apply application deployment")
 	}

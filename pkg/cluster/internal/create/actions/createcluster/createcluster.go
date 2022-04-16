@@ -62,21 +62,15 @@ func (a *action) Execute(ctx *actions.ActionContext) error {
 	// Create cluster
 	if err := node.Command(
 		"helm",
-		"repo",
-		"add",
+		"install",
+		"--repo",
+		"https://prcloud10.github.io/kind/cluster/",
+		"cluster1",
 		"cluster",
-		"https://prcloud10.github.io/kind/",
-	).Run(); err != nil {
-		return errors.Wrap(err, "failed to add helm repo")
-	}
-
-	if err := node.Command(
-		"helm", "install", "cluster1",
 		"--set", "ip="+a.Ip,
 		"--set", "workers="+a.Workers,
 		"--set", "controllers="+a.Controllers,
 		"--set", "k8version="+a.K8version,
-		"cluster",
 	).Run(); err != nil {
 		return errors.Wrap(err, "failed to create cluster")
 	}

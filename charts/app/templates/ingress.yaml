@@ -12,7 +12,21 @@ spec:
           service:
             name: appui-service
             port:
-              number: 8080
+              number: {{ .Values.port }}
+      - pathType: Prefix
+        path: "/api"
+        backend:
+          service:
+            name: apigw-service
+            port:
+              number: {{ .Values.port }}
+      - pathType: Prefix
+        path: "/list"
+        backend:
+          service:
+            name: apigw-service
+            port:
+              number: {{ .Values.port }}
       - pathType: Prefix
         path: "/loki"
         backend:
@@ -20,17 +34,3 @@ spec:
             name: loki
             port:
               number: 3100
-      - pathType: Prefix
-        path: "/api"
-        backend:
-          service:
-            name: apigw-service
-            port:
-              number: 8080
-      - pathType: Prefix
-        path: "/list"
-        backend:
-          service:
-            name: apigw-service
-            port:
-              number: 8080

@@ -54,7 +54,9 @@ SHELL:=env PATH=$(subst $(SPACE),\$(SPACE),$(PATH)) $(SHELL)
 INSTALL?=install
 # chart tool
 HELM?=helm
-HELM_URL=https://prcloud10.github.io/kind/
+HELM_URL=https://prcloud10.github.io/kind
+HELM_URL_APP=$(HELM_URL)/app
+HELM_URL_CLUSTER=$(HELM_URL)/cluster
 # install will place binaries here, by default attempts to mimic go install
 INSTALL_DIR?=$(shell hack/build/goinstalldir.sh)
 # the output binary name, overridden when cross compiling
@@ -74,19 +76,16 @@ build: kind buildcharts pushcharts
 kind:
 	CGO_ENABLED=0 go build -o $(OUT_DIR) -a -ldflags '-extldflags "-static"' .	
 # builds charts, outputs to $(HELM_URL)
-buildcharts: buildchartapp
+buildcharts: buildchartapp buildchartcluster
 buildchartcluster:
 	$(HELM) package $(CHART_CLUSTER_SRCDIR) -d $(OUT_CLUSTER_CHARTDIR)
-	$(HELM) repo index $(OUT_CLUSTER_CHARTDIR) --url $(HELM_URL)
+	$(HELM) repo index $(OUT_CLUSTER_CHARTDIR) --url $(HELM_URL_CLUSTER)
 buildchartapp:
 	$(HELM) package $(CHART_APP_SRCDIR) -d $(OUT_APP_CHARTDIR)
-	$(HELM) repo index $(OUT_APP_CHARTDIR) --url $(HELM_URL)
+	$(HELM) repo index $(OUT_APP_CHARTDIR) --url $(HELM_URL_APP)
 # push charts to repositories
 pushcharts:
-	cd $(OUT_CHARTS_DIR)
-	git add .
-	git commit -m "update"
-	git push 
+	cd $(OUT_CHARTS_DIR) && git add . && git commit -m "update" && git push https://luistef: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@github.com/prcloud10/kind.git
 
 # use: make install INSTALL_DIR=/usr/local/bin
 install: build
