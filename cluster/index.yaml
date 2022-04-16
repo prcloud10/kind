@@ -3,12 +3,12 @@ entries:
   cluster:
   - apiVersion: v2
     appVersion: 0.1.0
-    created: "2022-04-16T14:35:12.155252439-03:00"
+    created: "2022-04-16T14:37:02.758675747-03:00"
     description: A Helm chart for creating a capi cluster
-    digest: 5eefbeb867a92b67c34e31c499a981a3b805a0bfef658bb84b430bcd5b790416
+    digest: 25f5be2ae4f912f08ee1283c2a2033093e7a58eaee26eabf19b5388e5e327124
     name: cluster
     type: application
     urls:
     - https://prcloud10.github.io/kind/cluster/cluster-0.1.0.tgz
     version: 0.1.0
-generated: "2022-04-16T14:35:12.154657125-03:00"
+generated: "2022-04-16T14:37:02.757816765-03:00"
